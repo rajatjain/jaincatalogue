@@ -1,0 +1,9 @@
+package: github.com/aadhyatm/jaincatalogue
+import:
+- package: github.com/golang-collections/collections
+  subpackages:
+  - stack
+- package: github.com/google/logger
+  version: ~1.0.1
+- package: github.com/BurntSushi/toml
+  version: ^0.3.1

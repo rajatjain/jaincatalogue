@@ -1,0 +1,20 @@
+[development]
+Port = 8080
+# Relative to GOPATH
+BaseDir = "src/github.com/aadhyatm/jaincatalogue"
+
+# Relative to BaseDir
+HTMLDir = "html"
+TemplateDir = "html/templates"
+DataDir = "data"
+
+[production]
+Port = 8080
+
+# Relative to GOPATH
+BaseDir = "src/github.com/aadhyatm/jaincatalogue"
+
+# Relative to BaseDir
+HTMLDir = "html"
+TemplateDir = "html/templates"
+DataDir = "data"

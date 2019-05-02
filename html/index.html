@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" data-ng-app="eacPage" class="ng-scope"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+        
+    <title>जैन सिद्धांत प्रवेशिका</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="./static/bootstrap.min.css" rel="stylesheet">
+    <link href="./static/style.css" rel="stylesheet">
+    <link href="./static/sheroes.css" rel="stylesheet">
+    <link href="./static/flags.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Jain_Prateek_Chihna.svg/440px-Jain_Prateek_Chihna.svg.png">
+
+    <link href="./static/easy-autocomplete.min.css" rel="stylesheet">
+    <link href="./static/easy-autocomplete.themes.min.css" rel="stylesheet">
+    <link href="./static/css" rel="stylesheet" type="text/css">
+    <link href="./static/css(1)" rel="stylesheet" type="text/css">
+    <link href="./static/css(2)" rel="stylesheet" type="text/css">
+    
+    <script async="" src="./static/analytics.js"></script><script src="./static/jquery-1.11.2.min.js"></script>
+    <script src="./static/bootstrap.min.js"></script>
+    <!-- <script src="./static/run_prettify.js"></script> -->
+
+    <link href="./static/pretiffy.css" rel="stylesheet">
+
+    <script src="./static/jquery.easy-autocomplete.min.js"></script>
+    <script src="./static/angular.min.js"></script>
+    <script>
+        angular.module("eacPage", []);
+    </script>
+    <script src="./static/homeController.js"></script>
+    
+<style>
+	#eac-container-example-ddg li {
+		height: 52px;
+		overflow: hidden;
+	}
+
+	#example-mail {
+		width: 300px;
+	}
+
+	.eac-plate-dark a {
+		color: #fff;
+		text-decoration: none;
+	}
+
+	.eac-square .eac-category {
+		border-color: #7f8c8d !important;
+		color: #999;
+		font-size: 16px !important;
+		font-weight: 300 !important;
+		font-style: italic;
+		padding-left: 8px !important;
+	}
+
+</style>
+
+<script src="./static/examplesController.js"></script>
+
+    <style>
+      .eac-square input, .eac-round input {
+        background-image: url("images/icon_search.png");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+      }
+		</style>
+		
+  </head>
+
+  <body>
+
+<div class="container themes-container ng-scope" data-ng-controller="examplesCtrl">
+
+	<div class="row">
+
+	<h3 class="page-header" id="examples-ddg">जैन सिद्धांत प्रवेशिका में 'खोजें'</h3>
+
+		<div class="easy-autocomplete" style="width: 50px;"><input id="example-ddg" placeholder="Type something..."
+			autocomplete="off"><div class="easy-autocomplete-container"
+			id="eac-container-example-ddg"><ul></ul></div></div>
+		<button class="btn btn-eac  ng-binding" id="search-button">Search</button>
+
+		<script>
+		var options = {	
+			url: function(phrase) {
+				if (phrase != "") {
+					return "/q?prefix=" + phrase
+				}
+			},
+
+			getValue: "Word",
+
+			ajaxSettings: {
+				dataType: "jsonp"
+			},
+			requestDelay: 100,
+			// theme: "round"
+		};
+
+		$("#example-ddg").easyAutocomplete(options);
+
+		</script>
+
+<script type="text/javascript">
+	document.getElementById("search-button").onclick = function () {
+			var query_word = document.getElementById("example-ddg").value;
+			location.href = "/q?query=" + query_word;
+	};
+</script>
+
+
+</div>
+
+<!-- Search results come here -->
+
+<!--
+<h4 class="page-header" id="examples-ddg">Search Results</h4>
+
+<h4>Q. 486</h4>
+<p><b>Q: </b>प्रदेशत्व गुण किसे कहते हैं ?</p>
+<p><b>A: </b>जिस शक्ति के कारण द्रव्य का कोई न कोई आकार अवश्य रहता है , उसे प्रदेशत्व गुण कहते हैं  |</p>
+<br>
+<h4>Q. 486</h4>
+<p><b>Q: </b>प्रदेशत्व गुण किसे कहते हैं ?</p>
+<p><b>A: </b>जिस शक्ति के कारण द्रव्य का कोई न कोई आकार अवश्य रहता है , उसे प्रदेशत्व गुण कहते हैं  |</p>
+-->
+</body></html>
