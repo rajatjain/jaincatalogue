@@ -3,15 +3,16 @@ package http
 import (
 	"encoding/json"
 	"fmt"
-	config "github.com/aadhyatm/jaincatalogue/config"
-	index "github.com/aadhyatm/jaincatalogue/index"
-	"github.com/aadhyatm/jaincatalogue/internal/jsonp"
-	log "github.com/google/logger"
-	"html/template"
 	"io"
 	"net/http"
 	"path"
 	"strings"
+	"text/template"
+
+	config "github.com/aadhyatm/jaincatalogue/config"
+	index "github.com/aadhyatm/jaincatalogue/index"
+	"github.com/aadhyatm/jaincatalogue/internal/jsonp"
+	log "github.com/google/logger"
 )
 
 type oneResult struct {
@@ -49,7 +50,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		// In both question & answer, replace "\n" by "<br>"
 		for _, result := range results.Results {
-			result.Answer = template.HTMLEscapeString(strings.Replace(result.Answer, "\\n", "\n", -1))
+			result.Answer = strings.Replace(result.Answer, "\\n", "<br><br>", -1)
 		}
 
 		tmplDir := config.GetConfig().TemplateDir
