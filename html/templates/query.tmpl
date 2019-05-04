@@ -1,126 +1,95 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" data-ng-app="eacPage" class="ng-scope"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+{{define "query"}}
+{{template "header"}}
+<div class="doc-wrapper">
+            <div class="container">
+                <div id="doc-header" class="doc-header text-center">
+                    <h1 class="doc-title">Jain Siddhant Praveshika</h1>
+                </div><!--//doc-header-->
 
-<meta name=”viewport” content=”width=device-width, initial-scale=1″>
+                <div class="doc-body row" >
+                    <div class="doc-content col-md-9 col-12 order-1">
+                        <div class="content-inner">
+                            <section id="dashboards" class="doc-section">
+                                <h2 class="section-title">Search</h2>
+	                            <div class="main-search-box pt-3 pb-4 d-inline-block">
+	                                <form class="form-inline search-form justify-content-center">
+                     		            <div class="easy-autocomplete" style="width: 80px;">
+                                            <input id="example-ddg" placeholder="{{.Query}}"
+			                                        autocomplete="off" size=30>
+                                            <div class="easy-autocomplete-container"
+			                                    id="eac-container-example-ddg">
+                                            </div>
+                                        </div>&nbsp;&nbsp;&nbsp;&nbsp; 
+			                            <!-- <button class="btn search-btn" value="Search" id="search-button"><i class="fas fa-search"></i></button> -->
+                                        <a href="#" class="btn btn-primary" id="search-button">Search</a>
+			            
+			                        </form>
+	                                </div>
 
-    <title>जैन सिद्धांत प्रवेशिका</title>
-    
-    <!-- Bootstrap core CSS -->
-    <link href="./static/bootstrap.min.css" rel="stylesheet">
-    <link href="./static/style.css" rel="stylesheet">
-    <link href="./static/sheroes.css" rel="stylesheet">
-    <link href="./static/flags.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Jain_Prateek_Chihna.svg/440px-Jain_Prateek_Chihna.svg.png">
+                                    <script>
+                                        var options = {
+                                            url: function(phrase) {
+                                                if (phrase != "") {
+                                                    return "/q?prefix=" + phrase
+                                                }
+                                            },
 
-    <link href="./static/easy-autocomplete.min.css" rel="stylesheet">
-    <link href="./static/easy-autocomplete.themes.min.css" rel="stylesheet">
-    <link href="./static/css" rel="stylesheet" type="text/css">
-    <link href="./static/css(1)" rel="stylesheet" type="text/css">
-    <link href="./static/css(2)" rel="stylesheet" type="text/css">
-    
-    <script async="" src="./static/analytics.js"></script><script src="./static/jquery-1.11.2.min.js"></script>
-    <script src="./static/bootstrap.min.js"></script>
-    <script src="./static/run_prettify.js"></script>
+                                            getValue: "Word",
 
-    <link href="./static/pretiffy.css" rel="stylesheet">
+                                            ajaxSettings: {
+                                                dataType: "jsonp"
+                                            },
+                                            requestDelay: 100,
+                                        };
 
-    <script src="./static/jquery.easy-autocomplete.min.js"></script>
-    <script src="./static/angular.min.js"></script>
-    <script>
-        angular.module("eacPage", []);
-    </script>
-    <script src="./static/homeController.js"></script>
-    
-<style>
-	#eac-container-example-ddg li {
-		height: 52px;
-		overflow: hidden;
-	}
+                                        $("#example-ddg").easyAutocomplete(options);
 
-	#example-mail {
-		width: 300px;
-	}
+                                    </script>
 
-	.eac-plate-dark a {
-		color: #fff;
-		text-decoration: none;
-	}
+                                    <script type="text/javascript">
+                                        document.getElementById("search-button").onclick = function () {
+                                            console.log("hi")
+                                            var query_word = document.getElementById("example-ddg").value;
+                                            console.log("query word: " + query_word)
+                                            location.href = "/q?query=" + query_word;
+                                        };
+                                    </script>
+                                
+                            </section><!--//doc-section-->
 
-	.eac-square .eac-category {
-		border-color: #7f8c8d !important;
-		color: #999;
-		font-size: 16px !important;
-		font-weight: 300 !important;
-		font-style: italic;
-		padding-left: 8px !important;
-	}
+                            <section id="general" class="doc-section">
+                                <h2 class="section-title">Search Results: {{.Query}}</h2>
 
-</style>
-
-<script src="./static/examplesController.js"></script>
-
-    <style>
-      .eac-square input, .eac-round input {
-        background-image: url("images/icon_search.png");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-      }
-		</style>
-		
-  </head>
-
-  <body>
-
-<div class="container themes-container ng-scope" data-ng-controller="examplesCtrl">
-
-	<div class="row">
-
-	<h3 class="page-header" id="examples-ddg">जैन सिद्धांत प्रवेशिका में 'खोजें'</h3>
-
-		<div class="easy-autocomplete" style="width: 50px;"><input id="example-ddg" placeholder="{{.Query}}"
-			autocomplete="off"><div class="easy-autocomplete-container"
-			id="eac-container-example-ddg"><ul></ul></div></div>
-		<button class="btn btn-eac  ng-binding" id="search-button">Search</button>
-
-		<script>
-		var options = {	
-			url: function(phrase) {
-				if (phrase != "") {
-					return "/q?prefix=" + phrase
-				}
-			},
-
-			getValue: "Word",
-
-			ajaxSettings: {
-				dataType: "jsonp"
-			},
-			requestDelay: 100,
-			// theme: "round"
-		};
-
-		$("#example-ddg").easyAutocomplete(options);
-
-		</script>
-
-	<script type="text/javascript">
-	document.getElementById("search-button").onclick = function () {
-			var query_word = document.getElementById("example-ddg").value;
-			location.href = "/q?query=" + query_word;
-	};
-  </script>
-
-</div>
-
-<!-- Search results come here -->
-
-	<h3 class="page-header" id="examples-ddg">Search Results: {{.Query}}</h3>
-
-	{{range .Results}}
-		<h4>Q. {{.Chapter}}.{{.Number}}</h4>
-		<p><b>Q: </b>{{.Question}}</p>
-		<p><b>A: </b>{{.Answer}}</p>
-		<br>
-	{{end}}
-
-</body></html>
+                                {{range .Results}}
+                                <div class="section-block">
+                                    <h3 class="question"><b>Q {{.Chapter}}.{{.Number}}</b>: {{.Question}}</h3>
+                                    <div class="answer"><span class="question"><b>A:&nbsp;</b></span>{{.Answer}}</div>
+                                </div><!--//section-block-->
+                                {{end}}
+                            </section><!--//doc-section-->
+                                                        
+                        </div><!--//content-inner-->
+                    </div><!--//doc-content-->
+                    <div class="doc-sidebar col-md-3 col-12 order-0 d-none d-md-flex">
+                        <div id="doc-nav" class="doc-nav">
+                            <nav id="doc-menu" class="nav doc-menu flex-column sticky">
+                                <a class="nav-link scrollto" href="#dashboards">Home</a>
+                                <a class="nav-link scrollto" href="#ui-components">Jain Catalogue</a>
+                                <a class="nav-link scrollto" href="#app-components">Jain Siddhant Praveshika</a>
+                                    <!-- <nav class="doc-sub-menu nav flex-column">
+                                        <a class="nav-link scrollto" href="#projects">Projects</a>
+                                        <a class="nav-link scrollto" href="#discussions">Discussions</a>
+                                        <a class="nav-link scrollto" href="#members">Members</a>
+                                        <a class="nav-link scrollto" href="#account">User Account</a>
+                                        <a class="nav-link scrollto" href="#others">Others</a> -->
+                                    <!--</nav>//nav-->
+                                <a class="nav-link scrollto" href="#">Structured Way to Learn Jainism</a>
+                            </nav><!--//doc-menu-->
+                        </div><!--//doc-nav-->
+                    </div><!--//doc-sidebar-->
+                </div><!--//doc-body-->              
+            </div><!--//container-->
+        </div><!--//doc-wrapper-->
+                
+    </div><!--//page-wrapper-->
+{{end}}

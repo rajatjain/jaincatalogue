@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"path"
 	"strings"
 	"text/template"
 
@@ -18,6 +17,8 @@ import (
 type oneResult struct {
 	Word string
 }
+
+var templates *template.Template
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("Query params: ", r.URL.Query())
@@ -53,9 +54,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 			result.Answer = strings.Replace(result.Answer, "\\n", "<br><br>", -1)
 		}
 
-		tmplDir := config.GetConfig().TemplateDir
-		tmpl := template.Must(template.ParseFiles(path.Join(tmplDir, "query.tmpl")))
-		tmpl.Execute(w, results)
+		templates.ExecuteTemplate(w, "query", results)
 	} else if prefixWord != "" {
 		// return autocomplete output
 		words := index.PrefixSearch(prefixWord)
@@ -85,6 +84,8 @@ func InitHTTPServer() {
 	cfg := config.GetConfig()
 	log.Info("HTMLDir: ", cfg.HTMLDir)
 	fs := http.FileServer(http.Dir(cfg.HTMLDir))
+
+	templates = template.Must(template.ParseGlob(config.GetConfig().TemplateDir + "/*"))
 
 	http.Handle("/", fs)
 	http.HandleFunc("/q", searchHandler)
