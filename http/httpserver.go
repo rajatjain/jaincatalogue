@@ -22,8 +22,8 @@ type oneResult struct {
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("Query params: ", r.URL.Query())
 
-	prefixWord := r.URL.Query().Get("prefix")
-	queryWord := r.URL.Query().Get("query")
+	prefixWord := strings.ToLower(r.URL.Query().Get("prefix"))
+	queryWord := strings.ToLower(r.URL.Query().Get("query"))
 	outputFormat := r.Header.Get("Accept")
 	log.Info("OutputFormat: ", outputFormat)
 	returnJSON := false
