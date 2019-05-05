@@ -91,6 +91,10 @@ func introHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "intro", nil)
 }
 
+func catalogueHandler(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "catalogue", nil)
+}
+
 // InitHTTPServer Initializes HTTP Server
 func InitHTTPServer() {
 	cfg := config.GetConfig()
@@ -103,6 +107,7 @@ func InitHTTPServer() {
 	http.HandleFunc("/q", searchHandler)
 	http.HandleFunc("/praveshika", praveshikaHanlder)
 	http.HandleFunc("/intro", introHandler)
+	http.HandleFunc("/catalogue", catalogueHandler)
 
 }
 
