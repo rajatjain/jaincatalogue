@@ -1,4 +1,4 @@
-{{define "query"}}
+{{define "praveshika"}}
 {{template "header"}}
 <div class="doc-wrapper">
             <div class="container">
@@ -14,7 +14,7 @@
 	                            <div class="main-search-box pt-3 pb-4 d-inline-block">
 	                                <form class="form-inline search-form justify-content-center">
                      		            <div class="easy-autocomplete" style="width: 80px;">
-                                            <input id="example-ddg" placeholder="{{.Query}}"
+                                            <input id="example-ddg" placeholder="{{if.Query}} {{.Query}} {{else}} Type Something... {{end}}"
 			                                        autocomplete="off" size=30>
                                             <div class="easy-autocomplete-container"
 			                                    id="eac-container-example-ddg">
@@ -51,45 +51,39 @@
                                             console.log("hi")
                                             var query_word = document.getElementById("example-ddg").value;
                                             console.log("query word: " + query_word)
-                                            location.href = "/q?query=" + query_word;
+                                            location.href = "/praveshika?query=" + query_word;
                                         };
                                     </script>
                                 
                             </section><!--//doc-section-->
 
+                            {{ if not .Query}}
+                                <!-- nothing -->
+                            {{else}}
                             <section id="general" class="doc-section">
                                 <h2 class="section-title">Search Results: {{.Query}}</h2>
 
-                                {{range .Results}}
-                                <div class="section-block">
-                                    <h3 class="question"><b>Q {{.Chapter}}.{{.Number}}</b>: {{.Question}}</h3>
-                                    <div class="answer"><span class="question"><b>A:&nbsp;</b></span>{{.Answer}}</div>
-                                </div><!--//section-block-->
+                                {{$length := len .Results}} {{if eq $length 0}}
+                                    <br>
+                                    <h4 class="question">No results found!</h4>
+                                {{else}}
+                                    {{range .Results}}
+                                    <div class="section-block">
+                                        <h3 class="question"><b>Q {{.Chapter}}.{{.Number}}</b>: {{.Question}}</h3>
+                                        <div class="answer"><span class="question"><b>A:&nbsp;</b></span>{{.Answer}}</div>
+                                    </div><!--//section-block-->
+                                    {{end}}
                                 {{end}}
                             </section><!--//doc-section-->
+                            {{end}}
                                                         
                         </div><!--//content-inner-->
                     </div><!--//doc-content-->
-                    <div class="doc-sidebar col-md-3 col-12 order-0 d-none d-md-flex">
-                        <div id="doc-nav" class="doc-nav">
-                            <nav id="doc-menu" class="nav doc-menu flex-column sticky">
-                                <a class="nav-link scrollto" href="#dashboards">Home</a>
-                                <a class="nav-link scrollto" href="#ui-components">Jain Catalogue</a>
-                                <a class="nav-link scrollto" href="#app-components">Jain Siddhant Praveshika</a>
-                                    <!-- <nav class="doc-sub-menu nav flex-column">
-                                        <a class="nav-link scrollto" href="#projects">Projects</a>
-                                        <a class="nav-link scrollto" href="#discussions">Discussions</a>
-                                        <a class="nav-link scrollto" href="#members">Members</a>
-                                        <a class="nav-link scrollto" href="#account">User Account</a>
-                                        <a class="nav-link scrollto" href="#others">Others</a> -->
-                                    <!--</nav>//nav-->
-                                <a class="nav-link scrollto" href="#">Structured Way to Learn Jainism</a>
-                            </nav><!--//doc-menu-->
-                        </div><!--//doc-nav-->
-                    </div><!--//doc-sidebar-->
+                    {{template "sidebar"}}
                 </div><!--//doc-body-->              
             </div><!--//container-->
         </div><!--//doc-wrapper-->
                 
     </div><!--//page-wrapper-->
+{{template "footer"}}
 {{end}}

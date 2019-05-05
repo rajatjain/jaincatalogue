@@ -20,41 +20,50 @@ type oneResult struct {
 
 var templates *template.Template
 
+func praveshikaHanlder(w http.ResponseWriter, r *http.Request) {
+	log.Info("Query params: ", r.URL.Query())
+
+	_, readFull := r.URL.Query()["full"]
+	queryWord := strings.ToLower(r.URL.Query().Get("query"))
+
+	if readFull {
+		templates.ExecuteTemplate(w, "praveshikaFull", nil)
+		return
+	}
+
+	if queryWord != "" {
+		results := index.Search(queryWord)
+		for _, result := range results.Results {
+			result.Answer = strings.Replace(result.Answer, "\\n", "<br><br>", -1)
+		}
+		templates.ExecuteTemplate(w, "praveshika", results)
+		return
+	} else {
+		templates.ExecuteTemplate(w, "praveshika", index.SearchResults{Query: ""})
+		return
+	}
+}
+
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("Query params: ", r.URL.Query())
 
 	prefixWord := strings.ToLower(r.URL.Query().Get("prefix"))
 	queryWord := strings.ToLower(r.URL.Query().Get("query"))
-	outputFormat := r.Header.Get("Accept")
-	log.Info("OutputFormat: ", outputFormat)
-	returnJSON := false
-	if outputFormat == "application/json" {
-		log.Info("Returning Json output")
-		returnJSON = true
-	}
 
 	if queryWord != "" {
 		// return complete output
 		results := index.Search(queryWord)
-		if returnJSON {
-			json, err := json.Marshal(results)
-			if err != nil {
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte(err.Error()))
-				return
-			}
+		json, err := json.Marshal(results)
+		if err != nil {
 			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			w.Write(json)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			return
 		}
-		// In both question & answer, replace "\n" by "<br>"
-		for _, result := range results.Results {
-			result.Answer = strings.Replace(result.Answer, "\\n", "<br><br>", -1)
-		}
-
-		templates.ExecuteTemplate(w, "query", results)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(json)
+		return
 	} else if prefixWord != "" {
 		// return autocomplete output
 		words := index.PrefixSearch(prefixWord)
@@ -75,8 +84,11 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		return
-		// return nothing
 	}
+}
+
+func introHandler(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "intro", nil)
 }
 
 // InitHTTPServer Initializes HTTP Server
@@ -89,6 +101,8 @@ func InitHTTPServer() {
 
 	http.Handle("/", fs)
 	http.HandleFunc("/q", searchHandler)
+	http.HandleFunc("/praveshika", praveshikaHanlder)
+	http.HandleFunc("/intro", introHandler)
 
 }
 

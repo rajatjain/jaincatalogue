@@ -110,7 +110,7 @@
                                     console.log("hi")
                                     var query_word = document.getElementById("example-ddg").value;
                                     console.log("query word: " + query_word)
-                                    location.href = "/q?query=" + query_word;
+                                    location.href = "/praveshika?query=" + query_word;
                                 };
                             </script>
 
@@ -122,17 +122,14 @@
                     <div class="doc-sidebar col-md-3 col-12 order-0 d-none d-md-flex">
                         <div id="doc-nav" class="doc-nav">
                             <nav id="doc-menu" class="nav doc-menu flex-column sticky">
-                                <a class="nav-link scrollto" href="#dashboards">Home</a>
-                                <a class="nav-link scrollto" href="#ui-components">Jain Catalogue</a>
-                                <a class="nav-link scrollto" href="#app-components">Jain Siddhant Praveshika</a>
-                                    <!-- <nav class="doc-sub-menu nav flex-column">
-                                        <a class="nav-link scrollto" href="#projects">Projects</a>
-                                        <a class="nav-link scrollto" href="#discussions">Discussions</a>
-                                        <a class="nav-link scrollto" href="#members">Members</a>
-                                        <a class="nav-link scrollto" href="#account">User Account</a>
-                                        <a class="nav-link scrollto" href="#others">Others</a> -->
-                                    <!--</nav>//nav-->
-                                <a class="nav-link scrollto" href="#">Structured Way to Learn Jainism</a>
+                                <a class="nav-link" href="/">Home</a>
+                                <a class="nav-link" href="/catalogue">Jain Catalogue</a>
+                                <a class="nav-link" href="/praveshika">Jain Siddhant Praveshika</a>
+                                    <nav class="doc-sub-menu nav flex-column">
+                                        <a class="nav-link" href="/praveshika">Search</a>
+                                        <a class="nav-link" href="/praveshika?full">Read Full</a>
+                                    </nav>
+                                <a class="nav-link" href="/intro">Intro to Jainism</a>
                             </nav><!--//doc-menu-->
                         </div><!--//doc-nav-->
                     </div><!--//doc-sidebar-->

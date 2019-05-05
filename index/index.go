@@ -171,12 +171,12 @@ func Search(word string) SearchResults {
 		// search the english map
 		hindi, ok1 := englishToHindiMap[word]
 		if !ok1 {
-			return SearchResults{}
+			return SearchResults{Query: word}
 		}
 		word = hindi
 		indexList, ok = wordQuestionAnswerMap[word]
 		if !ok {
-			return SearchResults{}
+			return SearchResults{Query: word}
 		}
 	}
 	results := []*SearchResult{}
@@ -191,13 +191,4 @@ func Search(word string) SearchResults {
 // PrefixSearch Return all results matching a prefix
 func PrefixSearch(prefix string) []string {
 	return trie.Search(prefix)
-}
-
-// GetEnglishWords blah
-func GetEnglishWords() []string {
-	words := []string{}
-	for word := range englishToHindiMap {
-		words = append(words, word)
-	}
-	return words
 }
