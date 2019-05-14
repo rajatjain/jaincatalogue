@@ -23,25 +23,15 @@ This package creates the index of Jain Siddhant Praveshika. The format is as fol
 This package will return the question/answer(s) in above format given a search word.
 */
 
-var trie = newTrie()
-
-// Index index struct
-type Index struct {
-	number        int
-	chapter       int
-	question      string
-	answer        string
-	questionWords []string
-	answerWords   []string
-}
+var trie = NewTrie()
 
 func (index *Index) toString() string {
 	return fmt.Sprintf("%d-%d:: q: %s, question_words: %s",
-		index.chapter, index.number, index.question, index.questionWords)
+		index.Chapter, index.Number, index.Question, index.QuestionWords)
 }
 
 // Contains a map of the question number to the Index
-var questionAnswerMap = make(map[int]*Index) // can be created as a slice/array
+var questionAnswerMap = make(map[int32]*Index) // can be created as a slice/array
 
 // Contains the list of all Q&A
 type questionAnswerList []*Index
@@ -67,7 +57,7 @@ func createQuestionAnswerMap(filename string) {
 		// - words for question search
 		// - words for answer search
 		index := buildIndex(scanner.Text())
-		questionAnswerMap[index.number] = index
+		questionAnswerMap[index.Number] = index
 
 		// For this index, populate wordQuestionAnswerMap
 		addToWordQuestionAnswerMap(index)
@@ -75,7 +65,7 @@ func createQuestionAnswerMap(filename string) {
 }
 
 func addToWordQuestionAnswerMap(index *Index) {
-	words := index.questionWords
+	words := index.QuestionWords
 	for _, word := range words {
 		list, err := wordQuestionAnswerMap[word]
 		if !err {
@@ -89,10 +79,12 @@ func addToWordQuestionAnswerMap(index *Index) {
 func buildIndex(line string) *Index {
 	s := strings.Split(line, "#")
 	chapter, err := strconv.Atoi(s[0])
+	chapter32 := int32(chapter)
 	if err != nil {
 		log.Fatal(err)
 	}
 	num, err := strconv.Atoi(s[1])
+	num32 := int32(num)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -107,9 +99,10 @@ func buildIndex(line string) *Index {
 		aWordsList = s[4]
 		aWords = strings.Split(aWordsList, ",")
 	}
+
 	return &Index{
-		number: num, chapter: chapter, question: question, answer: answer,
-		questionWords: qWords, answerWords: aWords,
+		Number: num32, Chapter: chapter32, Question: question, Answer: answer,
+		QuestionWords: qWords, AnswerWords: aWords,
 	}
 }
 
@@ -150,20 +143,6 @@ func InitIndex() {
 	}
 }
 
-// SearchResult searchresults
-type SearchResult struct {
-	Chapter  int
-	Number   int
-	Question string
-	Answer   string
-}
-
-// SearchResults Search results
-type SearchResults struct {
-	Query   string
-	Results []*SearchResult
-}
-
 // Search function
 func Search(word string) SearchResults {
 	indexList, ok := wordQuestionAnswerMap[word]
@@ -182,8 +161,8 @@ func Search(word string) SearchResults {
 	results := []*SearchResult{}
 	for _, index := range indexList {
 		results = append(results, &SearchResult{
-			Number: index.number, Question: index.question,
-			Answer: index.answer, Chapter: index.chapter})
+			Number: index.Number, Question: index.Question,
+			Answer: index.Answer, Chapter: index.Chapter})
 	}
 	return SearchResults{Query: word, Results: results}
 }

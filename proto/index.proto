@@ -1,0 +1,23 @@
+syntax = "proto3";
+package index;
+
+message Index {
+    int32 number = 1;
+    int32 chapter = 2;
+    string question = 3;
+    string answer = 4;
+    repeated string questionWords = 5;
+    repeated string answerWords = 6;
+}
+
+message SearchResult {
+    int32 chapter = 1;
+    int32 number = 2;
+    string question = 3;
+    string answer = 4;
+}
+
+message SearchResults {
+    string query = 1;
+    repeated SearchResult results = 2;
+}
