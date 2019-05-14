@@ -18,9 +18,13 @@
   revision = "604e922904d35e97f98a774db7881f049cd8d970"
 
 [[projects]]
-  digest = "1:318f1c959a8a740366fce4b1e1eb2fd914036b4af58fbd0a003349b305f118ad"
+  digest = "1:1d82405f30f13f12539bc10a480ac0c8e2a0852d95d568af38ee232a3f4e2d1b"
   name = "github.com/golang/protobuf"
-  packages = ["proto"]
+  packages = [
+    "jsonpb",
+    "proto",
+    "ptypes/struct",
+  ]
   pruneopts = "UT"
   revision = "b5d812f8a3706043e23a9cd5babf2e5423744d30"
   version = "v1.3.1"
@@ -34,7 +38,8 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:1a87381c83ad6a2ec045d3d72f3fe742681f3f075d549199d9c5fedbaeb3e3fe"
+  branch = "master"
+  digest = "1:0a003de6c2d6ec9e9156fd38451bd189a24b8504ac961dfc242b5a247cbbfd2b"
   name = "golang.org/x/sys"
   packages = [
     "windows",
@@ -42,7 +47,7 @@
     "windows/svc/eventlog",
   ]
   pruneopts = "UT"
-  revision = "d89cdac9e8725f2aefce25fcbfef41134c9ad412"
+  revision = "a5b02f93d862f065920dd6a40dddc66b60d0dec4"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -50,6 +55,7 @@
   input-imports = [
     "github.com/BurntSushi/toml",
     "github.com/golang-collections/collections/stack",
+    "github.com/golang/protobuf/jsonpb",
     "github.com/golang/protobuf/proto",
     "github.com/google/logger",
   ]

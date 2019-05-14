@@ -1,0 +1,47 @@
+syntax = "proto3";
+package catalogue;
+
+// Item represents a single item in a catalogue
+message Item {
+  enum Type {
+    TEXT = 0;  // Denotes a text file in the format of PDF etc.
+    AUDIO = 1;
+    VIDEO = 2;
+    SERIES = 3;
+    IMAGE = 4;
+    OTHER = 5;
+  }
+
+  uint64 uuid = 1;
+
+  string name = 2;    // Name of the item
+  string path = 3;    // Path where the item is stored
+  string author = 4;  // Author of the item
+  string original_author = 5;
+  Type type = 6;             // Type of the item
+  repeated string tags = 7;  // All the search tags associated with the item
+  string short_description = 8;
+  string description = 9;
+
+  string location_url = 10;   // Location where the item is kept
+  string thumbnail_url = 11;  // URL where the thumbnail image is kept
+
+  bool series = 12;  // Is this item a series? There can be a series within a series too.
+
+  // In case this is a series, then the sub-items in the series
+  repeated uint64 items = 13;
+
+  // In case this item is part of the series, add series_uuid
+  uint64 series_uuid = 14;
+}
+
+message Query {
+  string query = 1;
+
+  // TODO(rajat.jain): Add query parameters like author, labels etc.
+}
+
+message SearchResult {
+  Query query = 1;
+  repeated Item results = 2;
+}

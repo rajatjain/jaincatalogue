@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+
 	"github.com/aadhyatm/jaincatalogue/config"
 	"github.com/aadhyatm/jaincatalogue/http"
 	"github.com/aadhyatm/jaincatalogue/index"

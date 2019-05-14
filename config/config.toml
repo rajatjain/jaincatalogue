@@ -7,6 +7,7 @@ BaseDir = "src/github.com/aadhyatm/jaincatalogue"
 HTMLDir = "html"
 TemplateDir = "html/templates"
 DataDir = "data"
+CatalogueMetadataDir = "data/catalogue"
 
 [production]
 Port = 8080
@@ -18,3 +19,4 @@ BaseDir = "src/github.com/aadhyatm/jaincatalogue"
 HTMLDir = "html"
 TemplateDir = "html/templates"
 DataDir = "data"
+CatalogueMetadataDir = "data/catalogue"

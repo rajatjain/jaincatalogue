@@ -2,10 +2,11 @@ package config
 
 import (
 	"fmt"
-	"github.com/BurntSushi/toml"
-	log "github.com/google/logger"
 	"os"
 	"path"
+
+	"github.com/BurntSushi/toml"
+	log "github.com/google/logger"
 )
 
 // Config The configuration parameters required for running app
@@ -14,10 +15,11 @@ type Config struct {
 	Port int
 
 	// Static Data configs
-	BaseDir     string
-	HTMLDir     string
-	TemplateDir string
-	DataDir     string
+	BaseDir              string
+	HTMLDir              string
+	TemplateDir          string
+	DataDir              string
+	CatalogueMetadataDir string
 
 	// Environment
 	Environment string
