@@ -23,7 +23,7 @@ This package creates the index of Jain Siddhant Praveshika. The format is as fol
 This package will return the question/answer(s) in above format given a search word.
 */
 
-var trie = NewTrie()
+var trie = newTrie()
 
 func (index *Index) toString() string {
 	return fmt.Sprintf("%d-%d:: q: %s, question_words: %s",
