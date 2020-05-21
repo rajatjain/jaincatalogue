@@ -2,3 +2,4 @@ vendor
 logs
 *.pb.go
 .DS_Store
+.idea
