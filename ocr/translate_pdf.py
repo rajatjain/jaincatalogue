@@ -47,11 +47,11 @@ This is tested on macOS. However, it should equally work on a linux environment 
 """
 
 
-BASE_FOLDER = "TODO: set this"
+BASE_FOLDER = "TODO: add this"
 JPG_FOLDER = "%s/jpg" % BASE_FOLDER
 TXT_FOLDER = "%s/txt" % BASE_FOLDER
 
-BASE_FILE = "%s/%s" % (BASE_FOLDER, "TODO: set this")
+BASE_FILE = "%s/%s" % (BASE_FOLDER, "TODO: add this")
 
 vision_client = vision.ImageAnnotatorClient()
 translate_client = translate.Client()
@@ -111,11 +111,14 @@ def detect_text(filename):
 
 def save_results():
     print('Total files collected: %d' % len(files_text.keys()))
+    total_chars = 0
     for file, text in files_text.items():
         fh = open(os.path.join(TXT_FOLDER, file), "w")
         fh.write(text)
         fh.close()
+        total_chars += len(text)
         print('Saved file %s' % file)
+    print("Total chars extracted: %d" % total_chars)
 
 
 def translate():
