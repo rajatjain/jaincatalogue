@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import io
 import os
 import subprocess
 import shutil
@@ -10,16 +11,39 @@ from concurrent.futures import ThreadPoolExecutor
 from docx import Document
 from docx.shared import Pt
 
-from google.cloud import storage
-from google.cloud import translate_v2 as translate
 from google.cloud import vision
 
 """
 Requirements:
- - Need to download GOOGLE_APPLICATION_CREDENTIALS in a JSON file and set it as an environment variable.
- - imagemagick (for 'convert' application)
- - python-docx (creating .docx file)
- - google cloud storage, translate, vision packages etc.
+  - Google Cloud Account
+  - Linux/MacOS
+  - Python
+
+Setup:
+  - Create a Google Cloud Account
+  - Create a new project from https://console.cloud.google.com
+  - Setup credentials and download the credentials JSON file
+    https://cloud.google.com/docs/authentication/getting-started
+  - Enable vision API: https://cloud.google.com/vision/docs/setup
+  - gcloud auth login
+
+  - Install requisite libraries
+    * ghostscript
+    * imagemagick
+  - Using 'pip' download the following libraries
+    * python-docx
+    * google-cloud-vision
+
+  - Run the script by changing the required parameters
+
+For M1 macos users: 
+    For M1 mac, the regular 'pip install' commands would not work
+    as the default pip binaries are compiled with x86 architecture.
+
+    Use the following command to install the requisite libraries.
+
+    pip install --no-binary :all: python-docx --no-cache-dir --ignore-installed
+    pip install --no-binary :all: google-cloud-vision --no-cache-dir --ignore-installed
 """
 
 """
@@ -27,41 +51,30 @@ The tool accepts a .pdf file location and then converts it into a fully translat
 .docx file. Here's how it happens:
 
   - The .pdf file is converted into a list of .jpg files
-  - All the .jpg files are uploaded to google cloud storage
-  - Google translate/vision APIs are used to convert each .jpg
+  - Google vision APIs are used to convert each .jpg
     file into a .txt file
   - All the .txt files are stored locally
   - All the .txt files are combined into the final .docx file
   
 Notes:
-  - 'convert' by imagemagick is the library used to convert .pdf to .jpg files
-     A better tool (native python sdk) will be helpful
-  - Each jpg file needs to be present in google cloud storage (requirement)
-  - User needs to have a google cloud account, download the credentials file
-  - Environment variable GOOGLE_APPLICATION_CREDENTIALS needs to be set pointing
-    to the json file containing the credentials
-  - Need to enable the google cloud vision, translate APIs on google cloud console
-    (https://cloud.google.com/functions/docs/tutorials/ocr)
-    
-This is tested on macOS. However, it should work equally well on any linux environment.
+This script uses google vision APIs which is chargeable by Google.
+Please be aware of this before using this. Check the prices here to estimate your cost:
+https://cloud.google.com/vision/pricing#prices
 """
 
 
-BASE_FOLDER = "/Users/rjain/pdfs"
+# The base folder where the original PDF file is kept.
+BASE_FOLDER = "/Users/rajatj/pdfs"
+
+# The folder where the JPG files from the PDF files will be stored.
 JPG_FOLDER = "%s/jpg" % BASE_FOLDER
+
+# The folders where text files are stored.
 TXT_FOLDER = "%s/txt" % BASE_FOLDER
 
-BASE_FILE = "%s/%s" % (BASE_FOLDER, "Dhyeya_Purvak_Gyeya_H.pdf")
+BASE_FILE = "%s/%s" % (BASE_FOLDER, "Bund bund Ma Amrut.pdf")
 
 vision_client = vision.ImageAnnotatorClient()
-translate_client = translate.Client()
-storage_client = storage.Client()
-
-INPUT_BUCKET = "jaincatalogue-images"
-INPUT_BUCKET_PREFIX = "jpgs"
-
-files_text = dict()
-
 
 def init():
     # Create all the base folders
@@ -69,8 +82,6 @@ def init():
         if os.path.isdir(folder):
             shutil.rmtree(folder)
         os.makedirs(folder)
-    clear_gcp_bucket()
-
 
 def convert_pdf_to_images():
     os.chdir(JPG_FOLDER)
@@ -82,31 +93,13 @@ def convert_pdf_to_images():
     print("PDF to images done!")
 
 
-def clear_gcp_bucket():
-    bucket = storage_client.bucket(INPUT_BUCKET)
-    for blob in bucket.list_blobs(prefix=INPUT_BUCKET_PREFIX):
-        blob.delete()
-    print("GCS bucket cleared")
-
-
-def upload_images_to_gcs():
-    bucket = storage_client.bucket(INPUT_BUCKET)
-    total_files = 0
-    for file in os.listdir(JPG_FOLDER):
-        total_files += 1
-    uploaded_files = 0
-    for file in os.listdir(JPG_FOLDER):
-        if os.path.isfile(os.path.join(JPG_FOLDER, file)):
-            blob = bucket.blob(INPUT_BUCKET_PREFIX + "/" + file)
-            blob.upload_from_filename(os.path.join(JPG_FOLDER, file))
-            uploaded_files += 1
-            print("Uploaded %s: %d of %d" % (file, uploaded_files, total_files))
-    print("Uploaded all images to gcs")
-
 def detect_text(filename):
-    text_detection_response = vision_client.text_detection({
-        'source': {'image_uri': 'gs://{}/{}'.format(INPUT_BUCKET, filename)}
-    })
+    file_name = os.path.abspath(filename)
+    with io.open(file_name, 'rb') as image_file:
+        content = image_file.read()
+
+    image = vision.Image(content=content)
+    text_detection_response = vision_client.text_detection(image=image)
     annotations = text_detection_response.text_annotations
     if len(annotations) > 0:
         text = annotations[0].description
@@ -114,31 +107,11 @@ def detect_text(filename):
         text = ''
     print('Extracted text from image %s (%s chars)' % (filename, len(text)))
 
-    output_name = filename.split(".")[0].split("/")[1] + ".txt"
-    files_text[output_name] = text
-    print("Text detection done")
-
-def save_results():
-    print('Total files collected: %d' % len(files_text.keys()))
-    total_chars = 0
-    for file, text in files_text.items():
-        fh = open(os.path.join(TXT_FOLDER, file), "w")
-        fh.write(text)
-        fh.close()
-        total_chars += len(text)
-        print('Saved file %s' % file)
-    print("Total chars extracted: %d" % total_chars)
-
-
-def translate():
-    bucket = storage_client.bucket(INPUT_BUCKET)
-    blobs = bucket.list_blobs(prefix=INPUT_BUCKET_PREFIX)
-    files = list()
-    for blob in blobs:
-        files.append(blob.name)
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        executor.map(detect_text, files)
-
+    output_name = filename.split(".")[0].split("/")[-1] + ".txt"
+    fh = open(os.path.join(TXT_FOLDER, output_name), 'w')
+    fh.write(text)
+    fh.close()
+    print("Text detection done for file %s" % filename)
 
 def txt2doc():
     base_fname = os.path.basename(BASE_FILE)
@@ -161,16 +134,28 @@ def txt2doc():
         document.add_page_break()
     document.save(final_fname)
 
-
-if __name__ == '__main__':
+def main():
     start = time.time()
     init()
 
     convert_pdf_to_images()
-    upload_images_to_gcs()
-    translate()
-    save_results()
+    files = []
+    for file in os.listdir(JPG_FOLDER):
+        files.append(os.path.join(JPG_FOLDER, file))
+    files.sort()
+    print(files)
+
+    futures = []
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        for file in files:
+            futures.append(executor.submit(detect_text, file))
+
+        for future in futures:
+            print(future.result())
+
     txt2doc()
-    clear_gcp_bucket()
     end = time.time()
     print("Total time: %.2f secs" % (end - start))
+
+if __name__ == '__main__':
+    main()
