@@ -35,6 +35,10 @@ Setup:
     * google-cloud-vision
 
   - Run the script by changing the required parameters
+    BASE_FOLDER
+    JPG_FOLDER
+    TXT_FOLDER
+    BASE_FILE
 
 For M1 macos users: 
     For M1 mac, the regular 'pip install' commands would not work
@@ -90,8 +94,7 @@ def convert_pdf_to_images():
     print("This may take some time.")
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
-    print("PDF to images done!")
-
+    print("Converted original PDF file to images.")
 
 def detect_text(filename):
     file_name = os.path.abspath(filename)
@@ -105,7 +108,6 @@ def detect_text(filename):
         text = annotations[0].description
     else:
         text = ''
-    print('Extracted text from image %s (%s chars)' % (filename, len(text)))
 
     output_name = filename.split(".")[0].split("/")[-1] + ".txt"
     fh = open(os.path.join(TXT_FOLDER, output_name), 'w')
@@ -151,11 +153,11 @@ def main():
             futures.append(executor.submit(detect_text, file))
 
         for future in futures:
-            print(future.result())
+            a = future.result()
 
     txt2doc()
     end = time.time()
-    print("Total time: %.2f secs" % (end - start))
+    print("Total time: %d secs" % (end - start))
 
 if __name__ == '__main__':
     main()
