@@ -14,6 +14,24 @@ from docx.shared import Pt
 from google.cloud import vision
 
 """
+The tool accepts a PDF file and converts it into a fully translated
+.docx file. Here are the steps:
+
+  - The pdf file is converted into a list of jpg (image) files using
+    imagemagick (convert)
+  - Google vision APIs are used to translate each jpg file to a text
+    file
+  - All the txt files (1 text file per image) are combined into the
+    final Microsoft Word (docx) file
+  
+NOTE:
+This script uses google vision APIs which is chargeable by Google.
+Please be aware of this before using this script. Check the prices here
+to estimate your cost:
+https://cloud.google.com/vision/pricing#prices
+"""
+
+"""
 Requirements:
   - Google Cloud Account
   - Linux/MacOS
@@ -25,12 +43,15 @@ Setup:
   - Setup credentials and download the credentials JSON file
     https://cloud.google.com/docs/authentication/getting-started
   - Enable vision API: https://cloud.google.com/vision/docs/setup
-  - gcloud auth login
+  - Install google cloud SDK
+    https://cloud.google.com/sdk/docs/install
+  - login to gcloud from the terminal
+    gcloud auth login
 
-  - Install requisite libraries
+  - Install required libraries
     * ghostscript
     * imagemagick
-  - Using 'pip' download the following libraries
+  - Use 'pip' to download the following libraries
     * python-docx
     * google-cloud-vision
 
@@ -50,25 +71,8 @@ For M1 macos users:
     pip install --no-binary :all: google-cloud-vision --no-cache-dir --ignore-installed
 """
 
-"""
-The tool accepts a .pdf file location and then converts it into a fully translated
-.docx file. Here's how it happens:
-
-  - The .pdf file is converted into a list of .jpg files
-  - Google vision APIs are used to convert each .jpg
-    file into a .txt file
-  - All the .txt files are stored locally
-  - All the .txt files are combined into the final .docx file
-  
-Notes:
-This script uses google vision APIs which is chargeable by Google.
-Please be aware of this before using this. Check the prices here to estimate your cost:
-https://cloud.google.com/vision/pricing#prices
-"""
-
-
 # The base folder where the original PDF file is kept.
-BASE_FOLDER = "/Users/rajatj/pdfs"
+BASE_FOLDER = "/link/to/base/folder"
 
 # The folder where the JPG files from the PDF files will be stored.
 JPG_FOLDER = "%s/jpg" % BASE_FOLDER
@@ -76,7 +80,7 @@ JPG_FOLDER = "%s/jpg" % BASE_FOLDER
 # The folders where text files are stored.
 TXT_FOLDER = "%s/txt" % BASE_FOLDER
 
-BASE_FILE = "%s/%s" % (BASE_FOLDER, "gnaangosthi_guj_scn.pdf")
+BASE_FILE = "%s/%s" % (BASE_FOLDER, "filename.pdf")
 
 vision_client = vision.ImageAnnotatorClient()
 
