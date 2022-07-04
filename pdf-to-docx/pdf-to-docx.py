@@ -76,7 +76,7 @@ JPG_FOLDER = "%s/jpg" % BASE_FOLDER
 # The folders where text files are stored.
 TXT_FOLDER = "%s/txt" % BASE_FOLDER
 
-BASE_FILE = "%s/%s" % (BASE_FOLDER, "Bund bund Ma Amrut.pdf")
+BASE_FILE = "%s/%s" % (BASE_FOLDER, "gnaangosthi_guj_scn.pdf")
 
 vision_client = vision.ImageAnnotatorClient()
 
@@ -89,9 +89,9 @@ def init():
 
 def convert_pdf_to_images():
     os.chdir(JPG_FOLDER)
-    cmd = [ "convert", "-density", "200", BASE_FILE, "page_%03d.jpg" ]
+    cmd = [ "convert", "-density", "200", "-scene", "1", BASE_FILE, "page_%03d.jpg" ]
     print("Calling cmd: %s ..." % (' '.join(cmd)))
-    print("This may take some time.")
+    print("This may take some time...")
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
     print("Converted original PDF file to images.")
@@ -102,12 +102,24 @@ def detect_text(filename):
         content = image_file.read()
 
     image = vision.Image(content=content)
-    text_detection_response = vision_client.text_detection(image=image)
-    annotations = text_detection_response.text_annotations
-    if len(annotations) > 0:
-        text = annotations[0].description
+    success = False
+    text_detection_response = None
+    for i in [0, 10]:
+        try:
+            text_detection_response = vision_client.text_detection(image=image)
+            success = True
+            break
+        except Exception as e:
+            print("Attempt %d failed for file %s. Retrying..." % ((i + 1), filename))
+    if success:
+        annotations = text_detection_response.text_annotations
+        if len(annotations) > 0:
+            text = annotations[0].description
+        else:
+            text = ''
     else:
         text = ''
+        print("Unable to convert filename %s. Please check offline." % (filename))
 
     output_name = filename.split(".")[0].split("/")[-1] + ".txt"
     fh = open(os.path.join(TXT_FOLDER, output_name), 'w')
@@ -124,7 +136,7 @@ def txt2doc():
     for file in os.listdir(TXT_FOLDER):
         files.append(file)
     files.sort()
-    print(files)
+    print("Converting %d text files from %s to %s to docx." % (len(files), files[0], files[-1]))
     document = Document()
     style = document.styles['Normal']
     style.font.name = 'Helvetica'
@@ -145,10 +157,10 @@ def main():
     for file in os.listdir(JPG_FOLDER):
         files.append(os.path.join(JPG_FOLDER, file))
     files.sort()
-    print(files)
+    print("Creating %d images from %s to %s." % (len(files), files[0], files[-1]))
 
     futures = []
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    with ThreadPoolExecutor(max_workers=6) as executor:
         for file in files:
             futures.append(executor.submit(detect_text, file))
 
