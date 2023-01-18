@@ -4,8 +4,8 @@ import os
 from utils import media
 
 HOME = os.getenv("HOME")
-base_folder = "%s/Adhyatm Work/Samaysaar 15th Time (Samaysaar Vaibhav)/" % HOME
-html_file = "%s/samaysaar_vaibhav.txt" % base_folder
+base_folder = "%s/Adhyatm Work/Samaysar Kalash Tika/" % HOME
+html_file = "%s/kalash_tika.txt" % base_folder
 
 
 class AudioFile:
@@ -17,12 +17,12 @@ class AudioFile:
         self.language = lang
 
     def __str__(self):
-        return "[Serial: %03d]  [Gatha: %s] [Kalash: %s] [Notes: %s] [Lang: %s]" % (
-            self.serial_no, self.gatha, self.kalash, self.notes, self.language
+        return "[Serial: %s]  [Gatha: %s] [Kalash: %s] [Notes: %s] [Lang: %s]" % (
+            self.serial_no_str, self.gatha, self.kalash, self.notes, self.language
         )
 
     def file_name(self):
-        str = "%03d_%s" % (self.serial_no, self.language)
+        str = "%s_%s" % (self.serial_no, self.language)
         if self.gatha:
             if len(self.gatha) == 1:
                 g_str = "G-%d" % self.gatha[0]
@@ -41,7 +41,7 @@ class AudioFile:
         return str
 
     def get_title(self):
-        str = "%03d Samaysaar" % self.serial_no
+        str = "%s Samaysaar Kalash Tika" % self.serial_no
         if self.gatha:
             if len(self.gatha) == 1:
                 g_str = "Gatha %d" % self.gatha[0]
@@ -61,9 +61,9 @@ class AudioFile:
 
 class Meta:
     artist = "Gurudev Kanji Swami"
-    album = "Samaysaar"
-    album_artist = "Acharya Kund Kund"
-    album_art_file = "%s/%s" % (HOME, "Personal Drive/My Drive/Jainism/images/upscale/kundkund acharya 2.jpeg")
+    album = "Samaysaar Kalash"
+    album_artist = "Acharya Amrutchandra"
+    album_art_file = "%s/%s" % (HOME, "Personal Drive/My Drive/Jainism/images/upscale/Amrutchandra Acharya.jpeg")
     genre = "Pravachan"
 
     def __init__(self, title, name, track_num):
@@ -87,7 +87,12 @@ def get_indices():
     for line in fh.readlines():
         if line.startswith('Pravachan'):
             splt = line.split("\t")
-            sr = int(splt[0].split("Pravachan")[1].split()[0].strip())
+            sno = splt[0].split("Pravachan")[1].split()[0].strip()
+            try:
+                sr = int(sno)
+                sr = "%03d" % sr
+            except:
+                sr = sno
             gatha = splt[2].strip()
             if gatha:
                 first = int(gatha.split(',')[0].strip())
@@ -124,7 +129,12 @@ def rename():
     for file in lst:
         if not file.endswith('.mp3'):
             continue
-        idx = int(file.split("ss15_")[1].split("_")[0])
+        id = file.split("skt")[1].split("_")[0]
+        try:
+            idx = int(id)
+            idx = "%03d" % idx
+        except:
+            idx = id
         new_name = "%s/%s" % (base_folder, indices[idx].file_name())
         old_name = "%s/%s" % (base_folder, file)
         print("Rename %s to %s" % (file, indices[idx].file_name()))
@@ -136,7 +146,7 @@ def add_meta():
     for file in lst:
         if not file.endswith('.mp3'):
             continue
-        idx = int(file.split("_")[0])
+        idx = file.split("_")[0]
         audio_file = indices[idx]
         meta = Meta(audio_file.get_title(), audio_file.file_name(), idx)
         media.add_metadata("%s/%s" % (base_folder, file), meta.album, meta.artist, meta.album_artist,
@@ -145,6 +155,7 @@ def add_meta():
 
 def main():
     get_indices()
+    rename()
     add_meta()
 
 
