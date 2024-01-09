@@ -72,7 +72,7 @@ For M1 macos users:
 """
 
 # The base folder where the original PDF file is kept.
-BASE_FOLDER = "/link/to/base/folder"
+BASE_FOLDER = "/Users/rajatj/pdfs"
 
 # The folder where the JPG files from the PDF files will be stored.
 JPG_FOLDER = "%s/jpg" % BASE_FOLDER
@@ -80,7 +80,7 @@ JPG_FOLDER = "%s/jpg" % BASE_FOLDER
 # The folders where text files are stored.
 TXT_FOLDER = "%s/txt" % BASE_FOLDER
 
-BASE_FILE = "%s/%s" % (BASE_FOLDER, "filename.pdf")
+BASE_FILE = "%s/%s" % (BASE_FOLDER, "Part-02_H copy.pdf")
 
 vision_client = vision.ImageAnnotatorClient()
 

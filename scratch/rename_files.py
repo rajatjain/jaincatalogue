@@ -6,8 +6,8 @@ import shutil
 
 from utils import media
 
-CSV_FILE = "/Users/rajatj/Adhyatm Work/Panchastikay/list.csv"
-FILES_LOC = "/Users/rajatj/Adhyatm Work/Panchastikay"
+CSV_FILE = "/Users/rajatj/Adhyatm Work/Pravachans/Natak Samaysaar/list.csv"
+FILES_LOC = "/Users/rajatj/Adhyatm Work/Pravachans/Natak Samaysaar"
 
 pravachan_index = dict()
 pravachan_index[69] = dict()
