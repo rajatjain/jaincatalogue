@@ -4,7 +4,7 @@ import shutil
 
 from utils import media
 
-DIR = "/Users/rajatj/Adhyatm Work/Pravachans/Asht Pahud"
+DIR = "/Users/rajatj/jain9.rajat@gmail.com - Google Drive/My Drive/Jainism/Gurudev Pravachan/Asht Pahud"
 
 ALBUM = "Asht Pahud"
 ARTIST = "Acharya Kund Kund"
@@ -119,5 +119,25 @@ def rename():
             new_file, "Asht Pahud", "Gurudev Kanji Swami", "Acharya Kund Kund",
             ALBUM_ART, track_num=track_num, title=title)
 
-build_map()
-rename()
+def change_meta():
+    loc = pathlib.Path(DIR)
+    for file in loc.rglob("*.mp3"):
+        file_name = str(file)
+        print(file_name)
+        fname = os.path.basename(file)
+        splt = fname.split("_")
+        pahud = file_name.split("/")[-2][2:]
+        index = splt[0]
+        gatha = splt[3].split(".")[0].split("-G")[1]
+        new_title = "%s %s - Gatha %s (Asht Pahud)" % (
+            pahud, index, gatha)
+
+        media.remove_metadata(file_name)
+        media.add_metadata(
+            file_name, "Asht Pahud", "Gurudev Kanji Swami", "Acharya Kund Kund",
+            ALBUM_ART, track_num=index, title=new_title)
+
+
+# build_map()
+# rename()
+change_meta()
