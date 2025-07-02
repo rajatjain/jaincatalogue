@@ -23,7 +23,7 @@ The tool accepts a PDF file and converts it into a fully translated
     file
   - All the txt files (1 text file per image) are combined into the
     final Microsoft Word (docx) file
-  
+
 NOTE:
 This script uses google vision APIs which is chargeable by Google.
 Please be aware of this before using this script. Check the prices here
@@ -35,7 +35,7 @@ https://cloud.google.com/vision/pricing#prices
 Requirements:
   - Google Cloud Account
   - Linux/MacOS
-  - Python
+  - Python 3.11 or above
 
 Setup:
   - Create a Google Cloud Account
@@ -48,10 +48,30 @@ Setup:
   - login to gcloud from the terminal
     gcloud auth login
 
+    For JainCatalogue:
+    - gcloud init (set default project as jaincatalogue)
+    - gcloud auth application-default login
+    - it'll generate a json file and save it in ~/.config/gcloud/application_default_credentials.json
+
+    It'll be of the format:
+        {
+            "account": "",
+            "client_id": "<>",
+            "client_secret": "<>",
+            "quota_project_id": "jaincatalogue",
+            "refresh_token": "<>",
+            "type": "authorized_user",
+            "universe_domain": "googleapis.com"
+        }
+
   - Install required libraries
     * ghostscript
     * imagemagick
+    * libxml2
+    * libxslt
+
   - Use 'pip' to download the following libraries
+    * lxml
     * python-docx
     * google-cloud-vision
 
@@ -61,26 +81,23 @@ Setup:
     TXT_FOLDER
     BASE_FILE
 
-For M1 macos users: 
-    For M1 mac, the regular 'pip install' commands would not work
-    as the default pip binaries are compiled with x86 architecture.
-
-    Use the following command to install the requisite libraries.
-
-    pip install --no-binary :all: python-docx --no-cache-dir --ignore-installed
-    pip install --no-binary :all: google-cloud-vision --no-cache-dir --ignore-installed
 """
 
+
+FNAME_PREFIX = "03"
+
+BASE_FILE_NAME = "%s.pdf" % FNAME_PREFIX
+
 # The base folder where the original PDF file is kept.
-BASE_FOLDER = "/Users/rajatj/pdfs"
+BASE_FOLDER = "/Users/r0j08wt/Documents/A/ocr"
 
 # The folder where the JPG files from the PDF files will be stored.
-JPG_FOLDER = "%s/jpg" % BASE_FOLDER
+JPG_FOLDER = "%s/jpg_%s" % (BASE_FOLDER, FNAME_PREFIX)
 
 # The folders where text files are stored.
-TXT_FOLDER = "%s/txt" % BASE_FOLDER
+TXT_FOLDER = "%s/txt_%s" % (BASE_FOLDER, FNAME_PREFIX)
 
-BASE_FILE = "%s/%s" % (BASE_FOLDER, "Part-02_H copy.pdf")
+BASE_FILE = "%s/%s" % (BASE_FOLDER, BASE_FILE_NAME)
 
 vision_client = vision.ImageAnnotatorClient()
 
@@ -141,10 +158,11 @@ def txt2doc():
         files.append(file)
     files.sort()
     print("Converting %d text files from %s to %s to docx." % (len(files), files[0], files[-1]))
+    print(files)
     document = Document()
     style = document.styles['Normal']
-    style.font.name = 'Helvetica'
-    style.font.size = Pt(10)
+    style.font.name = 'Eczar'
+    style.font.size = Pt(14)
 
     for file in files:
         contents = open(os.path.join(TXT_FOLDER, file)).read()
@@ -157,9 +175,12 @@ def main():
     init()
 
     convert_pdf_to_images()
+
     files = []
     for file in os.listdir(JPG_FOLDER):
-        files.append(os.path.join(JPG_FOLDER, file))
+        print(str(file))
+        if str(file).endswith('.jpg') or str(file).endswith('.jpeg'):
+            files.append(os.path.join(JPG_FOLDER, file))
     files.sort()
     print("Creating %d images from %s to %s." % (len(files), files[0], files[-1]))
 
@@ -177,3 +198,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    txt2doc()
