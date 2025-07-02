@@ -1,2 +1,3 @@
+# all documents required
 google-cloud-vision
 python-docx
