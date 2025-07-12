@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from docx import Document
 from docx.shared import Pt
+import docx2pdf
 
 from google.cloud import vision
 
@@ -84,7 +85,7 @@ Setup:
 """
 
 
-FNAME_PREFIX = "03"
+FNAME_PREFIX = "331"
 
 BASE_FILE_NAME = "%s.pdf" % FNAME_PREFIX
 
@@ -161,14 +162,22 @@ def txt2doc():
     print(files)
     document = Document()
     style = document.styles['Normal']
-    style.font.name = 'Eczar'
-    style.font.size = Pt(14)
+    style.font.name = 'NotoSansDevanagari-Regular'
+    style.font.size = Pt(10)
 
     for file in files:
         contents = open(os.path.join(TXT_FOLDER, file)).read()
         document.add_paragraph(contents, style=style)
         document.add_page_break()
     document.save(final_fname)
+
+def doc2pdf():
+    base_fname = os.path.basename(BASE_FILE)
+    doc_fname = os.path.join(BASE_FOLDER, base_fname.split('.')[0] + ".docx")
+    pdf_fname = os.path.join(BASE_FOLDER, base_fname.split('.')[0] + "_convert.pdf")
+    if os.path.isfile(pdf_fname):
+        os.remove(pdf_fname)
+    docx2pdf.convert(doc_fname, pdf_fname)
 
 def main():
     start = time.time()
@@ -193,9 +202,9 @@ def main():
             a = future.result()
 
     txt2doc()
+    doc2pdf()
     end = time.time()
     print("Total time: %d secs" % (end - start))
 
 if __name__ == '__main__':
     main()
-    txt2doc()
