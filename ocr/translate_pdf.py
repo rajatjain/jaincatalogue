@@ -85,7 +85,7 @@ Setup:
 """
 
 
-FNAME_PREFIX = "331"
+FNAME_PREFIX = "Gyaan_Goshthi"
 
 BASE_FILE_NAME = "%s.pdf" % FNAME_PREFIX
 
@@ -111,7 +111,7 @@ def init():
 
 def convert_pdf_to_images():
     os.chdir(JPG_FOLDER)
-    cmd = [ "convert", "-density", "200", "-scene", "1", BASE_FILE, "page_%03d.jpg" ]
+    cmd = [ "convert", "-density", "300", "-scene", "1", BASE_FILE, "page_%03d.jpg" ]
     print("Calling cmd: %s ..." % (' '.join(cmd)))
     print("This may take some time...")
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -128,15 +128,29 @@ def detect_text(filename):
     text_detection_response = None
     for i in [0, 10]:
         try:
-            text_detection_response = vision_client.text_detection(image=image)
+            text_detection_response = vision_client.document_text_detection(image=image)
             success = True
             break
         except Exception as e:
             print("Attempt %d failed for file %s. Retrying..." % ((i + 1), filename))
     if success:
-        annotations = text_detection_response.text_annotations
-        if len(annotations) > 0:
-            text = annotations[0].description
+        document = text_detection_response.full_text_annotation
+        if document:
+            paragraphs = []
+            # Process only the first page since each detect_text call handles one image/page
+            if document.pages:
+                page = document.pages[0]
+                for block in page.blocks:
+                    for paragraph in block.paragraphs:
+                        paragraph_text = ""
+                        for word in paragraph.words:
+                            word_text = ""
+                            for symbol in word.symbols:
+                                word_text += symbol.text
+                            paragraph_text += word_text + " "
+                        if paragraph_text.strip():
+                            paragraphs.append(paragraph_text.strip())
+            text = "\n\n".join(paragraphs)
         else:
             text = ''
     else:
